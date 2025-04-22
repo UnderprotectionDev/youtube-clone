@@ -40,7 +40,7 @@ function VideoSectionSuspense({ videoId }: VideoSectionProps) {
           thumbnailUrl={video.thumbnailUrl}
         />
       </div>
-      <VideoBanner status={"waiting"} />
+      <VideoBanner status={video.muxStatus} />
       <VideoTopRow video={video} />
     </>
   );
