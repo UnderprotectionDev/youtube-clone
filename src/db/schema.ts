@@ -40,16 +40,21 @@ export const userRelations = relations(users, ({ many }) => ({
   subscribers: many(subscriptions, {
     relationName: "subscriptions_creator_id_fkey",
   }),
+  comments: many(comments),
 }));
 
 export const subscriptions = pgTable(
   "subscriptions",
   {
     viewerId: uuid("viewer_id")
-      .references(() => users.id, { onDelete: "cascade" })
+      .references(() => users.id, {
+        onDelete: "cascade",
+      })
       .notNull(),
     creatorId: uuid("creator_id")
-      .references(() => users.id, { onDelete: "cascade" })
+      .references(() => users.id, {
+        onDelete: "cascade",
+      })
       .notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -114,7 +119,9 @@ export const videos = pgTable("videos", {
   visibility: videoVisibility("visibility").default("private").notNull(),
   userId: uuid("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => users.id, {
+      onDelete: "cascade",
+    }),
   categoryId: uuid("category_id").references(() => categories.id, {
     onDelete: "set null",
   }),
@@ -122,8 +129,8 @@ export const videos = pgTable("videos", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const videoInsertSchema = createInsertSchema(videos);
 export const videoSelectSchema = createSelectSchema(videos);
+export const videoInsertSchema = createInsertSchema(videos);
 export const videoUpdateSchema = createUpdateSchema(videos);
 
 export const videoRelations = relations(videos, ({ one, many }) => ({
@@ -137,7 +144,36 @@ export const videoRelations = relations(videos, ({ one, many }) => ({
   }),
   views: many(videoViews),
   reactions: many(videoReactions),
+  comments: many(comments),
 }));
+
+export const comments = pgTable("comments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  videoId: uuid("video_id")
+    .references(() => videos.id, { onDelete: "cascade" })
+    .notNull(),
+  value: text("value").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const commentRelations = relations(comments, ({ one }) => ({
+  user: one(users, {
+    fields: [comments.userId],
+    references: [users.id],
+  }),
+  video: one(videos, {
+    fields: [comments.videoId],
+    references: [videos.id],
+  }),
+}));
+
+export const commentSelectSchema = createSelectSchema(comments);
+export const commentInsertSchema = createInsertSchema(comments);
+export const commentUpdateSchema = createUpdateSchema(comments);
 
 export const videoViews = pgTable(
   "video_views",
@@ -170,8 +206,8 @@ export const videoViewsRelations = relations(videoViews, ({ one }) => ({
   }),
 }));
 
-export const videoViewInsertSchema = createInsertSchema(videoViews);
 export const videoViewSelectSchema = createSelectSchema(videoViews);
+export const videoViewInsertSchema = createInsertSchema(videoViews);
 export const videoViewUpdateSchema = createUpdateSchema(videoViews);
 
 export const reactionType = pgEnum("reaction_type", ["like", "dislike"]);
@@ -180,10 +216,14 @@ export const videoReactions = pgTable(
   "video_reactions",
   {
     userId: uuid("user_id")
-      .references(() => users.id, { onDelete: "cascade" })
+      .references(() => users.id, {
+        onDelete: "cascade",
+      })
       .notNull(),
     videoId: uuid("video_id")
-      .references(() => videos.id, { onDelete: "cascade" })
+      .references(() => videos.id, {
+        onDelete: "cascade",
+      })
       .notNull(),
     type: reactionType("type").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -208,6 +248,6 @@ export const videoReactionRelations = relations(videoReactions, ({ one }) => ({
   }),
 }));
 
-export const videoReactionInsertSchema = createInsertSchema(videoReactions);
 export const videoReactionSelectSchema = createSelectSchema(videoReactions);
+export const videoReactionInsertSchema = createInsertSchema(videoReactions);
 export const videoReactionUpdateSchema = createUpdateSchema(videoReactions);
