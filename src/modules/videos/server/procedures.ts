@@ -9,14 +9,18 @@ import {
 } from "@/db/schema";
 import { mux } from "@/lib/mux";
 import { workflow } from "@/lib/workflow";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  baseProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, inArray, isNotNull } from "drizzle-orm";
 import { UTApi } from "uploadthing/server";
 import { z } from "zod";
 
 export const videosRouter = createTRPCRouter({
-  getOne: protectedProcedure
+  getOne: baseProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ input, ctx }) => {
       const { clerkUserId } = ctx;
@@ -55,24 +59,38 @@ export const videosRouter = createTRPCRouter({
           ...getTableColumns(videos),
           user: {
             ...getTableColumns(users),
-            subscriberCount: db.$count(subscriptions, eq(subscriptions.creatorId, users.id)),
-            viewerSubscribed: isNotNull(viewerSubscriptions.viewerId).mapWith(Boolean),
+            subscriberCount: db.$count(
+              subscriptions,
+              eq(subscriptions.creatorId, users.id)
+            ),
+            viewerSubscribed: isNotNull(viewerSubscriptions.viewerId).mapWith(
+              Boolean
+            ),
           },
           viewCount: db.$count(videoViews, eq(videoViews.videoId, videos.id)),
           likeCount: db.$count(
             videoReactions,
-            and(eq(videoReactions.videoId, videos.id), eq(videoReactions.type, "like"))
+            and(
+              eq(videoReactions.videoId, videos.id),
+              eq(videoReactions.type, "like")
+            )
           ),
           dislikeCount: db.$count(
             videoReactions,
-            and(eq(videoReactions.videoId, videos.id), eq(videoReactions.type, "dislike"))
+            and(
+              eq(videoReactions.videoId, videos.id),
+              eq(videoReactions.type, "dislike")
+            )
           ),
           viewerReaction: viewerReactions.type,
         })
         .from(videos)
         .innerJoin(users, eq(videos.userId, users.id))
         .leftJoin(viewerReactions, eq(viewerReactions.videoId, videos.id))
-        .leftJoin(viewerSubscriptions, eq(viewerSubscriptions.creatorId, users.id))
+        .leftJoin(
+          viewerSubscriptions,
+          eq(viewerSubscriptions.creatorId, users.id)
+        )
         .where(eq(videos.id, input.id));
 
       if (!existingVideo) throw new TRPCError({ code: "NOT_FOUND" });
@@ -140,12 +158,15 @@ export const videosRouter = createTRPCRouter({
           .where(and(eq(videos.id, input.id), eq(videos.userId, userId)));
       }
 
-      if (!existingVideo.muxPlaybackId) throw new TRPCError({ code: "BAD_REQUEST" });
+      if (!existingVideo.muxPlaybackId)
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const utapi = new UTApi();
 
       const tempThumbnailUrl = `https://image.mux.com/${existingVideo.muxPlaybackId}/thumbnail.jpg`;
-      const uploadedThumbnail = await utapi.uploadFilesFromUrl(tempThumbnailUrl);
+      const uploadedThumbnail = await utapi.uploadFilesFromUrl(
+        tempThumbnailUrl
+      );
 
       if (!uploadedThumbnail.data) {
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
@@ -177,37 +198,39 @@ export const videosRouter = createTRPCRouter({
 
       return removedVideo;
     }),
-  update: protectedProcedure.input(videoUpdateSchema).mutation(async ({ ctx, input }) => {
-    const { id: userId } = ctx.user;
+  update: protectedProcedure
+    .input(videoUpdateSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id: userId } = ctx.user;
 
-    if (!input.id) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "Video ID is required",
-      });
-    }
+      if (!input.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Video ID is required",
+        });
+      }
 
-    const [updatedVideo] = await db
-      .update(videos)
-      .set({
-        title: input.title,
-        description: input.description,
-        categoryId: input.categoryId,
-        visibility: input.visibility,
-        updatedAt: new Date(),
-      })
-      .where(and(eq(videos.id, input.id), eq(videos.userId, userId)))
-      .returning();
+      const [updatedVideo] = await db
+        .update(videos)
+        .set({
+          title: input.title,
+          description: input.description,
+          categoryId: input.categoryId,
+          visibility: input.visibility,
+          updatedAt: new Date(),
+        })
+        .where(and(eq(videos.id, input.id), eq(videos.userId, userId)))
+        .returning();
 
-    if (!updatedVideo) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Video not found",
-      });
-    }
+      if (!updatedVideo) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Video not found",
+        });
+      }
 
-    return updatedVideo;
-  }),
+      return updatedVideo;
+    }),
   create: protectedProcedure.mutation(async ({ ctx }) => {
     const { id: userId } = ctx.user;
 
