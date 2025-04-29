@@ -14,7 +14,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { UserInfo } from "@/modules/users/ui/components/user-info";
 
 import { VideoMenu } from "./video-menu";
-import { VideoThumbnail } from "./video-thumbnail";
+import { VideoThumbnail, VideoThumbnailSkeleton } from "./video-thumbnail";
 import { VideoGetManyOutput } from "../../types";
 
 const videoRowCardVariants = cva("group flex min-w-0", {
@@ -53,7 +53,7 @@ export const VideoRowCardSkeleton = ({
     <div className={videoRowCardVariants({ size })}>
       {/* Thumbnail skeleton */}
       <div className={thumbnailVariants({ size })}>
-        {/* <VideoThumbnailSkeleton /> */}
+        <VideoThumbnailSkeleton />
       </div>
 
       {/* Info skeleton */}
