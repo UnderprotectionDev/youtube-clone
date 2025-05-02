@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { APP_URL } from "@/constants";
 import { toast } from "sonner";
+import { useState } from "react";
+import { PlaylistAddModal } from "@/modules/playlists/ui/components/playlist-add-modal";
 
 interface VideoMenuProps {
   videoId: string;
@@ -26,6 +28,8 @@ export function VideoMenu({
   variant = "ghost",
   onRemove,
 }: VideoMenuProps) {
+  const [openPlaylistAddModal, setOpenPlaylistAddModal] = useState(false);
+
   const onShare = () => {
     // TODO: Change if deploying outside of Vercel
     const fullUrl = `${APP_URL}/videos/${videoId}`;
@@ -34,6 +38,11 @@ export function VideoMenu({
   };
   return (
     <>
+      <PlaylistAddModal
+        open={openPlaylistAddModal}
+        onOpenChange={setOpenPlaylistAddModal}
+        videoId={videoId}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant={variant} size="icon" className="rounded-full">
@@ -45,7 +54,7 @@ export function VideoMenu({
             <ShareIcon className="mr-2 size-4" />
             Share
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => {}}>
+          <DropdownMenuItem onClick={() => setOpenPlaylistAddModal(true)}>
             <ListPlusIcon className="mr-2 size-4" />
             Add to playlist
           </DropdownMenuItem>
