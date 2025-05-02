@@ -4,7 +4,7 @@ import { HistoryView } from "../../../../modules/playlists/ui/views/history-view
 
 export const dynamic = "force-dynamic";
 
-export default function HistoryPage() {
+export default async function HistoryPage() {
   void trpc.playlists.getHistory.prefetchInfinite({
     limit: DEFAULT_LIMIT,
   });

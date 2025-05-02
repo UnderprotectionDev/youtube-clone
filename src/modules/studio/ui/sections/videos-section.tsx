@@ -131,7 +131,9 @@ function VideosSectionSuspense() {
                         />
                       </div>
                       <div className="flex flex-col overflow-hidden gap-y-1">
-                        <span className="text-sm line-clamp-1">{video.title}</span>
+                        <span className="text-sm line-clamp-1">
+                          {video.title}
+                        </span>
                         <span className="text-sm line-clamp-1">
                           {video.description || "No description"}
                         </span>
@@ -156,9 +158,15 @@ function VideosSectionSuspense() {
                   <TableCell className="text-sm truncate">
                     {format(new Date(video.createdAt), "d MMM, yyyy")}
                   </TableCell>
-                  <TableCell className="text-right text-sm">views</TableCell>
-                  <TableCell className="text-right text-sm">comments</TableCell>
-                  <TableCell className="text-right text-sm pr-6">likes</TableCell>
+                  <TableCell className="text-right text-sm">
+                    {video.viewCount}
+                  </TableCell>
+                  <TableCell className="text-right text-sm">
+                    {video.commentCount}
+                  </TableCell>
+                  <TableCell className="text-right text-sm pr-6">
+                    {video.likeCount}
+                  </TableCell>
                 </TableRow>
               ))
             )}
