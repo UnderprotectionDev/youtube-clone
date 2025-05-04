@@ -9,13 +9,20 @@ interface UseSubscriptionProps {
   fromVideoId?: string;
 }
 
-export function useSubscription({ userId, isSubscribed, fromVideoId }: UseSubscriptionProps) {
+export const useSubscription = ({
+  userId,
+  isSubscribed,
+  fromVideoId,
+}: UseSubscriptionProps) => {
   const clerk = useClerk();
   const utils = trpc.useUtils();
 
   const subscribe = trpc.subscriptions.create.useMutation({
     onSuccess: () => {
       toast.success("Subscribed");
+      utils.subscriptions.getMany.invalidate();
+      utils.videos.getManySubscribed.invalidate();
+      utils.users.getOne.invalidate({ id: userId });
 
       if (fromVideoId) {
         utils.videos.getOne.invalidate({ id: fromVideoId });
@@ -32,7 +39,10 @@ export function useSubscription({ userId, isSubscribed, fromVideoId }: UseSubscr
 
   const unsubscribe = trpc.subscriptions.remove.useMutation({
     onSuccess: () => {
-      toast.success("Unsubscribed");
+      toast.success("Subscribed");
+      utils.subscriptions.getMany.invalidate();
+      utils.videos.getManySubscribed.invalidate();
+      utils.users.getOne.invalidate({ id: userId });
 
       if (fromVideoId) {
         utils.videos.getOne.invalidate({ id: fromVideoId });
@@ -61,4 +71,4 @@ export function useSubscription({ userId, isSubscribed, fromVideoId }: UseSubscr
     isPending,
     onClick,
   };
-}
+};
