@@ -1,10 +1,14 @@
-# YouTube Clone 📺
+<div align="center">
+  <h1>YouTube Clone 📺</h1>
 
 <!-- Start Generation Here -->
 <p>A full-stack YouTube clone application built with Next.js. Features include video upload, playback, user authentication, and more, powered by a modern tech stack.</p>
 <!-- End Generation Here -->
+</div>
 
 ![Home](/public/readme-images/home.png)
+
+<div align="center">
 
 [![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -17,6 +21,8 @@
 [![Uploadthing](https://img.shields.io/badge/Uploadthing-F54C00?style=for-the-badge&logo=uploadthing&logoColor=white)](https://uploadthing.com/)
 [![Upstash](https://img.shields.io/badge/Upstash-00E9A3?style=for-the-badge&logo=upstash&logoColor=black)](https://upstash.com/)
 [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
+
+</div>
 
 ## ✨ Features
 
