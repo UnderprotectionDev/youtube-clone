@@ -180,13 +180,17 @@ Visit [http://localhost:3000](http://localhost:3000) to use the application.
 
 ![Profile](/public/readme-images/profile.png)
 
-### ▶️ Video
+### 🎬 Studio
 
-![Video](/public/readme-images/video.png)
+![Studio](/public/readme-images/studio.png)
 
 ### 🎬 Video Create
 
 ![Video Create](/public/readme-images/video-create.png)
+
+### ▶️ Video
+
+![Video](/public/readme-images/video.png)
 
 ## 🔐 Environment Variables
 
